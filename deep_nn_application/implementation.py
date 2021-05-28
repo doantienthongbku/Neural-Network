@@ -11,8 +11,10 @@ test_x_flatten = test_x_orig.reshape(test_x_orig.shape[0], -1).T
 train_x = train_x_flatten / 255.0
 test_x = test_x_flatten / 255.0
 
-parameters = [[train_x.shape[0], 7, 'relu'],
-              [7, 1, 'sigmoid']]
+parameters = [[train_x.shape[0], 20, 'relu'],
+              [20, 7, 'relu'],
+              [7, 5, 'relu']
+              [5, 1, 'sigmoid']]
 
 deep_nn = NeuralNetwork(parameters)
 deep_nn.fit(X=train_x, Y=train_y, epochs=2500, learning_rate=0.0075, print_cost=True)
