@@ -3,19 +3,21 @@ import h5py
 
 
 def relu(z):
-    return np.maximum(0, z)
+    return np.maximum(0., z)
 
 
 def drelu(z):
-    return (z >= 0)
+    z[z <= 0] = 0
+    z[z > 0] = 1
+    return z
 
 
 def sigmoid(z):
-    return 1 / (1 + np.exp(-z))
+    return 1. / (1. + np.exp(-z))
 
 
 def dsigmoid(z):
-    return sigmoid(z) * (1 - sigmoid(z))
+    return sigmoid(z) * (1. - sigmoid(z))
 
 
 def softmax(z):

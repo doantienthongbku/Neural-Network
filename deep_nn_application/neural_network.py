@@ -24,7 +24,7 @@ class NeuralNetwork:
 
     def _initialize_weights(self):
         for idx, (in_nodes, out_nodes, act_fn) in enumerate(self.parameters):
-            self.W[f'W{idx + 1}'] = np.random.randn(out_nodes, in_nodes) * 0.01
+            self.W[f'W{idx + 1}'] = np.random.randn(out_nodes, in_nodes) * np.sqrt(2 / in_nodes)
             self.B[f'B{idx + 1}'] = np.zeros(shape=(out_nodes, 1))
             self.activation.append(act_fn)
 
@@ -32,7 +32,7 @@ class NeuralNetwork:
         self.A['A0'] = X
         L = len(self.parameters)
         for idx in range(1, L + 1):
-            self.Z[f'Z{idx}'] = np.dot(self.W[f'W{idx}'], self.A[f'A{idx - 1}']) + self.B[f'B{idx}']
+            self.Z[f'Z{idx}'] = self.W[f'W{idx}'] @ self.A[f'A{idx - 1}'] + self.B[f'B{idx}']
 
             if (self.activation[idx] == "relu"):
                 self.A[f'A{idx}'] = utils.relu(self.Z[f'Z{idx}'])
@@ -60,9 +60,12 @@ class NeuralNetwork:
             elif (self.activation[idx] == "softmax"):
                 self.dZ[f'dZ{idx}'] = self.dA[f'dA{idx}'] * utils.dsoftmax(self.Z[f'Z{idx}'])
 
-            self.dW[f'dW{idx}'] = np.dot(self.dZ[f'dZ{idx}'], self.A[f'A{idx - 1}'].T)
+            self.dW[f'dW{idx}'] = (1 / m) * (self.dZ[f'dZ{idx}'] @ self.A[f'A{idx - 1}'].T)
             self.dB[f'dB{idx}'] = (1 / m) * np.sum(self.dZ[f'dZ{idx}'], axis=1, keepdims=True)
-            self.dA[f'dA{idx - 1}'] = np.dot(self.dW[f'dW{idx}'].T, self.dZ[f'dZ{idx}'])
+            self.dA[f'dA{idx - 1}'] = (self.W[f'W{idx}'].T @ self.dZ[f'dZ{idx}'])
+            # self.dW[f'dW{idx}'] = np.dot(self.dZ[f'dZ{idx}'], self.A[f'A{idx - 1}'].T)
+            # self.dB[f'dB{idx}'] = (1 / m) * np.sum(self.dZ[f'dZ{idx}'], axis=1, keepdims=True)
+            # self.dA[f'dA{idx - 1}'] = np.dot(self.dW[f'dW{idx}'].T, self.dZ[f'dZ{idx}'])
 
     def optimizer(self, learning_rate):
         L = len(self.parameters)
