@@ -13,19 +13,11 @@ def drelu(z):
 
 
 def sigmoid(z):
-<<<<<<< HEAD
     return 1. / (1. + np.exp(-z))
 
 
 def dsigmoid(z):
-    return sigmoid(z) * (1. - sigmoid(z))
-=======
-    return 1.0 / (1.0 + np.exp(-z))
-
-
-def dsigmoid(z):
     return sigmoid(z) * (1.0 - sigmoid(z))
->>>>>>> d6331482366a9ca80fd5ab0182640347afdb697c
 
 
 def softmax(z):
