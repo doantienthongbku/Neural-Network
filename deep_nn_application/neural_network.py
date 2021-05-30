@@ -44,7 +44,8 @@ class NeuralNetwork:
     def cost_function(self, Y):
         m = Y.shape[1]
         L = len(self.parameters)
-        cost = - (1 / m) * np.sum(Y * np.log(self.A[f'A{L}']) + (1 - Y) * np.log(1 - self.A[f'A{L}']))
+        cost = - 1 * np.sum(np.dot(Y, np.log(self.A[f'A{L}'])), np.dot((1 - Y), np.log(1 - self.A[f'A{L}']))) / m
+        # cost = - (1 / m) * np.sum(Y * np.log(self.A[f'A{L}']) + (1 - Y) * np.log(1 - self.A[f'A{L}']))
         return cost
 
     def backward(self, Y):
@@ -60,7 +61,11 @@ class NeuralNetwork:
             elif (self.activation[idx] == "softmax"):
                 self.dZ[f'dZ{idx}'] = self.dA[f'dA{idx}'] * utils.dsoftmax(self.Z[f'Z{idx}'])
 
+<<<<<<< HEAD
             self.dW[f'dW{idx}'] = (1 / m) * (self.dZ[f'dZ{idx}'] @ self.A[f'A{idx - 1}'].T)
+=======
+            self.dW[f'dW{idx}'] = np.dot(self.dZ[f'dZ{idx}'], self.A[f'A{idx - 1}'].T) / m
+>>>>>>> d6331482366a9ca80fd5ab0182640347afdb697c
             self.dB[f'dB{idx}'] = (1 / m) * np.sum(self.dZ[f'dZ{idx}'], axis=1, keepdims=True)
             self.dA[f'dA{idx - 1}'] = (self.W[f'W{idx}'].T @ self.dZ[f'dZ{idx}'])
             # self.dW[f'dW{idx}'] = np.dot(self.dZ[f'dZ{idx}'], self.A[f'A{idx - 1}'].T)

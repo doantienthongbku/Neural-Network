@@ -13,7 +13,11 @@ test_x = test_x_flatten / 255.0
 
 parameters = [[train_x.shape[0], 20, 'relu'],
               [20, 7, 'relu'],
+<<<<<<< HEAD
               [7, 5, 'relu'],
+=======
+              [7, 5, 'relu']
+>>>>>>> d6331482366a9ca80fd5ab0182640347afdb697c
               [5, 1, 'sigmoid']]
 
 deep_nn = NeuralNetwork(parameters)
