@@ -24,56 +24,56 @@ class NeuralNetwork:
 
     def _initialize_weights(self):
         for idx, (in_nodes, out_nodes, act_fn) in enumerate(self.parameters):
-            self.W[f'W{idx + 1}'] = np.random.randn(out_nodes, in_nodes) * np.sqrt(2 / in_nodes)
-            self.B[f'B{idx + 1}'] = np.zeros(shape=(out_nodes, 1))
+            self.W[idx + 1] = np.random.randn(out_nodes, in_nodes) * np.sqrt(2 / in_nodes)
+            self.B[idx + 1] = np.zeros(shape=(out_nodes, 1))
             self.activation.append(act_fn)
 
     def forward(self, X):
-        self.A['A0'] = X
+        self.A[0] = X
         L = len(self.parameters)
         for idx in range(1, L + 1):
-            self.Z[f'Z{idx}'] = self.W[f'W{idx}'] @ self.A[f'A{idx - 1}'] + self.B[f'B{idx}']
+            self.Z[idx] = self.W[idx] @ self.A[idx - 1] + self.B[idx]
 
             if (self.activation[idx] == "relu"):
-                self.A[f'A{idx}'] = utils.relu(self.Z[f'Z{idx}'])
+                self.A[idx] = utils.relu(self.Z[idx])
             elif (self.activation[idx] == "sigmoid"):
-                self.A[f'A{idx}'] = utils.sigmoid(self.Z[f'Z{idx}'])
+                self.A[idx] = utils.sigmoid(self.Z[idx])
             elif (self.activation[idx] == "softmax"):
-                self.A[f'A{idx}'] = utils.softmax(self.Z[f'Z{idx}'])
+                self.A[idx] = utils.softmax(self.Z[idx])
 
     def cost_function(self, Y):
         m = Y.shape[1]
         L = len(self.parameters)
-        cost = - (1 / m) * np.sum(Y * np.log(self.A[f'A{L}']) + (1 - Y) * np.log(1 - self.A[f'A{L}']))
+        cost = - (1 / m) * np.sum(Y * np.log(self.A[L]) + (1 - Y) * np.log(1 - self.A[L]))
         return cost
 
     def backward(self, Y):
         m = Y.shape[1]
         L = len(self.parameters)
-        self.dA[f'dA{L}'] = - (np.divide(Y, self.A[f'A{L}']) - np.divide(1 - Y, 1 - self.A[f'A{L}']))
+        self.dA[L] = - (np.divide(Y, self.A[L]) - np.divide(1 - Y, 1 - self.A[L]))
         for idx in reversed(range(1, L + 1)):
 
             if (self.activation[idx] == "relu"):
-                self.dZ[f'dZ{idx}'] = self.dA[f'dA{idx}'] * utils.drelu(self.Z[f'Z{idx}'])
+                self.dZ[idx] = self.dA[idx] * utils.drelu(self.Z[idx])
             elif (self.activation[idx] == "sigmoid"):
-                self.dZ[f'dZ{idx}'] = self.dA[f'dA{idx}'] * utils.dsigmoid(self.Z[f'Z{idx}'])
+                self.dZ[idx] = self.dA[idx] * utils.dsigmoid(self.Z[idx])
             elif (self.activation[idx] == "softmax"):
-                self.dZ[f'dZ{idx}'] = self.dA[f'dA{idx}'] * utils.dsoftmax(self.Z[f'Z{idx}'])
+                self.dZ[idx] = self.dA[idx] * utils.dsoftmax(self.Z[idx])
 
-            self.dW[f'dW{idx}'] = (1 / m) * (self.dZ[f'dZ{idx}'] @ self.A[f'A{idx - 1}'].T)
-            self.dB[f'dB{idx}'] = (1 / m) * np.sum(self.dZ[f'dZ{idx}'], axis=1, keepdims=True)
-            self.dA[f'dA{idx - 1}'] = (self.W[f'W{idx}'].T @ self.dZ[f'dZ{idx}'])
+            self.dW[idx] = (1 / m) * (self.dZ[idx] @ self.A[idx - 1].T)
+            self.dB[idx] = (1 / m) * np.sum(self.dZ[idx], axis=1, keepdims=True)
+            self.dA[idx - 1] = (self.W[idx].T @ self.dZ[idx])
 
     def optimizer(self, learning_rate):
         L = len(self.parameters)
         for idx in range(1, L + 1):
-            self.W[f'W{idx}'] = self.W[f'W{idx}'] - learning_rate * self.dW[f'dW{idx}']
-            self.B[f'B{idx}'] = self.B[f'B{idx}'] - learning_rate * self.dB[f'dB{idx}']
+            self.W[idx] = self.W[idx] - learning_rate * self.dW[idx]
+            self.B[idx] = self.B[idx] - learning_rate * self.dB[idx]
 
     def predict(self, X):
         L = len(self.parameters)
         self.forward(X)
-        return (self.A[f'A{L}'] > 0.5)
+        return (self.A[L] > 0.5)
 
     def dataloader(self, X, Y, batch_size=10, shuffle=True):
         pass
